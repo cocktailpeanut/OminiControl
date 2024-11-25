@@ -21,7 +21,9 @@ def init_pipeline():
     pipe = FluxPipeline.from_pretrained(
         "black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16
     )
-    pipe = pipe.to(device)
+    if device == "cuda":
+        pipe.enable_model_cpu_offload()
+#    pipe = pipe.to(device)
     pipe.load_lora_weights(
         "Yuanshi/OminiControl",
         weight_name=f"omini/subject_512.safetensors",
