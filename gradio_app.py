@@ -9,13 +9,19 @@ from src.generate import seed_everything, generate
 
 pipe = None
 
+if torch.backends.mps.is_available():
+    device = "mps"
+elif torch.cuda.is_available():
+    device = "cuda"
+else:
+    device = "cpu"
 
 def init_pipeline():
     global pipe
     pipe = FluxPipeline.from_pretrained(
         "black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16
     )
-    pipe = pipe.to("cuda")
+    pipe = pipe.to(device)
     pipe.load_lora_weights(
         "Yuanshi/OminiControl",
         weight_name=f"omini/subject_512.safetensors",
